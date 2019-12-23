@@ -1,6 +1,6 @@
-# appname
+# Super Trash CleanUp App
 
-A new Flutter project.
+A trash cleanup application...
 
 ## Getting Started
 
