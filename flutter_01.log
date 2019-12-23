@@ -1,0 +1,82 @@
+Flutter crash report; please file at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter emulators --launch Pixel_2_API_2
+
+## exception
+
+ProcessException: ProcessException: Process exited abnormally:
+emulator: ERROR: x86 emulation currently requires hardware acceleration!
+Please ensure Windows Hypervisor Platform (WHPX) is properly installed and usable.
+CPU acceleration status: GVM is not installed on this machine
+More info on configuring VM acceleration on Windows:
+https://developer.android.com/studio/run/emulator-acceleration#vm-windows
+If you are using an Intel CPU: please check that virtualization is enabled in the BIOS and that HAXM is installed and usable.
+Note: if Hyper-V or Credential Guard is enabled, the emulator will not work with HAXM.
+See https://github.com/intel/haxm/issues/105#issuecomment-470927735 for info on how to disable Credential Guard.
+If you are using an AMD CPU or need to run alongside Hyper-V-based apps such as Docker, we recommend using Windows Hypervisor Platform.General information on acceleration: https://developer.android.com/studio/run/emulator-acceleration.
+
+
+Warning: Quick Boot / Snapshots not supported on this machine. A CPU with EPT + UG features is currently needed. We will address this in a future release.
+  Command: C:\Users\jeewa\AppData\Local\Android\sdk\emulator\emulator.exe -avd Pixel_2_API_29
+
+```
+#0      RunResult.throwException (package:flutter_tools/src/base/process.dart:141:5)
+#1      _DefaultProcessUtils.run (package:flutter_tools/src/base/process.dart:275:19)
+<asynchronous suspension>
+#2      AndroidEmulator.launch (package:flutter_tools/src/android/android_emulator.dart:52:52)
+#3      EmulatorsCommand._launchEmulator (package:flutter_tools/src/commands/emulators.dart:74:31)
+<asynchronous suspension>
+#4      EmulatorsCommand.runCommand (package:flutter_tools/src/commands/emulators.dart:47:13)
+#5      FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:615:18)
+#6      _asyncThenWrapperHelper.<anonymous closure> (dart:async-patch/async_patch.dart:73:64)
+#7      _rootRunUnary (dart:async/zone.dart:1134:38)
+#8      _CustomZone.runUnary (dart:async/zone.dart:1031:19)
+#9      _FutureListener.handleValue (dart:async/future_impl.dart:139:18)
+#10     Future._propagateToListeners.handleValueCallback (dart:async/future_impl.dart:680:45)
+#11     Future._propagateToListeners (dart:async/future_impl.dart:709:32)
+#12     Future._completeWithValue (dart:async/future_impl.dart:524:5)
+#13     Future._asyncComplete.<anonymous closure> (dart:async/future_impl.dart:554:7)
+#14     _rootRun (dart:async/zone.dart:1126:13)
+#15     _CustomZone.run (dart:async/zone.dart:1023:19)
+#16     _CustomZone.runGuarded (dart:async/zone.dart:925:7)
+#17     _CustomZone.bindCallbackGuarded.<anonymous closure> (dart:async/zone.dart:965:23)
+#18     _microtaskLoop (dart:async/schedule_microtask.dart:43:21)
+#19     _startMicrotaskLoop (dart:async/schedule_microtask.dart:52:5)
+#20     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:118:13)
+#21     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:175:5)
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, v1.12.13+hotfix.5, on Microsoft Windows [Version 10.0.18362.113], locale en-US)
+    [32m•[39m Flutter version 1.12.13+hotfix.5 at C:\Users\jeewa\Downloads\Compressed\flutter
+    [32m•[39m Framework revision 27321ebbad (11 days ago), 2019-12-10 18:15:01 -0800
+    [32m•[39m Engine revision 2994f7e1e6
+    [32m•[39m Dart version 2.7.0
+
+[32m[✓][39m Android toolchain - develop for Android devices (Android SDK version 29.0.2)
+    [32m•[39m Android SDK at C:\Users\jeewa\AppData\Local\Android\sdk
+    [32m•[39m Android NDK location not configured (optional; useful for native profiling support)
+    [32m•[39m Platform android-29, build-tools 29.0.2
+    [32m•[39m Java binary at: C:\Program Files\Android\Android Studio\jre\bin\java
+    [32m•[39m Java version OpenJDK Runtime Environment (build 1.8.0_202-release-1483-b03)
+    [32m•[39m All Android licenses accepted.
+
+[33m[!][39m Android Studio (version 3.5)
+    [32m•[39m Android Studio at C:\Program Files\Android\Android Studio
+    [31m✗[39m Flutter plugin not installed; this adds Flutter specific functionality.
+    [31m✗[39m Dart plugin not installed; this adds Dart specific functionality.
+    [32m•[39m Java version OpenJDK Runtime Environment (build 1.8.0_202-release-1483-b03)
+
+[32m[✓][39m VS Code (version 1.41.1)
+    [32m•[39m VS Code at C:\Users\jeewa\AppData\Local\Programs\Microsoft VS Code
+    [32m•[39m Flutter extension version 3.7.1
+
+[32m[✓][39m Connected device (1 available)
+    [32m•[39m Redmi 4A • 4daa1eeb7d04 • android-arm64 • Android 7.1.2 (API 25)
+
+[33m![39m Doctor found issues in 1 category.
+```
