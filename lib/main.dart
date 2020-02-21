@@ -1,8 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MaterialApp(
+    title: 'Navigation Basics',
+    home: FirstRoute(),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var title = 'Trash Clean Up Coordination App';
@@ -117,7 +127,10 @@ class MyApp extends StatelessWidget {
 ),
 const SizedBox(height: 30),
         RaisedButton(
-          onPressed: () {},
+          onPressed: () { Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+            );},
           child: const Text(
             'Login',
             style: TextStyle(fontSize: 10, color: Colors.blue)
@@ -141,3 +154,155 @@ const SizedBox(height: 30),
   }
 }
 
+
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  File _selectedFile;
+  bool _inProcess = false;
+  Position _currentPosition;
+  String _currentAddress;
+
+  Widget getImageWidget() {
+    if (_selectedFile != null) {
+      String currentPos = _currentPosition.toString();
+      return Container (
+        child: Column (
+          children: [ Image.file(
+        _selectedFile,
+        width: 250,
+        height: 250,
+        fit: BoxFit.cover,
+      ), Text (_currentAddress),
+       Text (currentPos),
+          ],),);
+    } else {
+      return Container(
+        child: Column (
+          children: [Image.asset(
+        "assets/placeholder.jpg",
+        width: 250,
+        height: 250,
+        fit: BoxFit.cover,
+      ), Text ('Location of the image taken'),
+      ],
+      ),
+      );
+    }
+  }
+
+
+   __getCurrentLocation() {
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+      _getAddressFromLatLng();
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  _getAddressFromLatLng() async {
+    try{
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+        _currentPosition.latitude, _currentPosition.longitude);
+
+      Placemark place = p[0];
+
+      setState((){
+        _currentAddress = "${place.locality},${place.postalCode},${place.country}";
+      });
+    } catch (e) {
+      print (e);
+    }
+  }
+
+  getImage(ImageSource source) async {
+      this.setState((){
+        _inProcess = true;
+      });
+      File image = await ImagePicker.pickImage(source: source);
+      if(image != null){
+        __getCurrentLocation();
+        File cropped = await ImageCropper.cropImage(
+            sourcePath: image.path,
+            aspectRatio: CropAspectRatio(
+                ratioX: 1, ratioY: 1),
+            compressQuality: 100,
+            maxWidth: 700,
+            maxHeight: 700,
+            compressFormat: ImageCompressFormat.jpg,
+            androidUiSettings: AndroidUiSettings(
+              toolbarColor: Colors.deepOrange,
+              toolbarTitle: "RPS Cropper",
+              statusBarColor: Colors.deepOrange.shade900,
+              backgroundColor: Colors.white,
+            )
+        );
+
+        this.setState((){
+          _selectedFile = cropped;
+          _inProcess = false;
+        });
+      } else {
+        this.setState((){
+          _inProcess = false;
+        });
+      }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              getImageWidget(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  MaterialButton(
+                      color: Colors.green,
+                      child: Text(
+                        "Camera",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        getImage(ImageSource.camera);
+                      }),
+                  MaterialButton(
+                      color: Colors.deepOrange,
+                      child: Text(
+                        "Device",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        getImage(ImageSource.gallery);
+                      })
+                ],
+              )
+            ],
+          ),
+          (_inProcess)?Container(
+            color: Colors.white,
+            height: MediaQuery.of(context).size.height * 0.95,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ):Center()
+        ],
+      )
+    );
+  }
+}
