@@ -1,6 +1,6 @@
-# Super Trash CleanUp App
+# flutter_image
 
-A trash cleanup application...
+Image Application
 
 ## Getting Started
 
